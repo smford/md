@@ -27,7 +27,7 @@ func DefaultOptions() Options {
 		ImageHeight: "auto",
 		LineNumbers: false,
 		Hyperlinks:  true,
-		Pager:       true,
+		Pager:       false,
 		Plain:       false,
 		Debug:       false,
 		BasePath:    "",

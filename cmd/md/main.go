@@ -82,7 +82,7 @@ Unicode box borders, syntax-highlighted code blocks, and OSC 8 clickable hyperli
 	flags.StringVar(&opts.ImageHeight, "image-height", "auto", "Image height constraint: auto, 20, 300px")
 	flags.BoolVarP(&opts.LineNumbers, "line-numbers", "n", false, "Show line numbers in code blocks")
 	flags.BoolVar(&opts.Hyperlinks, "hyperlinks", true, "Enable OSC 8 terminal hyperlinks")
-	flags.BoolVar(&opts.Pager, "pager", true, "Enable pager for output longer than terminal screen")
+	flags.BoolVar(&opts.Pager, "pager", false, "Enable pager for output longer than terminal screen")
 	flags.BoolVar(&noPager, "no-pager", false, "Disable pager output")
 	flags.BoolVar(&opts.Plain, "plain", false, "Output plain text without ANSI escape sequences or colors")
 	flags.BoolVar(&opts.Debug, "debug", false, "Print debug diagnostic logs to stderr")

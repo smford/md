@@ -38,7 +38,7 @@ Designed through a Senior Site Reliability Engineering lens, `md` solves common 
 
 ### 5. Production SRE Reliability
 - **Safe Broken Pipes (`EPIPE`)**: Gracefully handles downstream pipe termination (e.g. `md doc.md | head -n 5`) without emitting runtime panics or broken pipe error traces.
-- **Interactive Pager**: When stdout is connected to a TTY and output exceeds terminal height, automatically launches `$PAGER` (defaulting to `less -R -F -X`).
+- **Interactive Pager**: Optionally pipe long output through `$PAGER` (defaulting to `less -R -F -X`) using the `--pager` flag.
 - **Plain Mode for Scripting**: Use `--plain` to strip all ANSI codes and borders, outputting clean plain text suitable for `grep`, `awk`, or saving to log files.
 - **Built-in Diagnostics (`md doctor`)**: Inspect terminal capabilities, iTerm2 detection, truecolor, and inline graphic protocols in one command.
 
@@ -105,7 +105,7 @@ md --plain guide.md | grep "Configuration"
 | `--image-height`| | `"auto"` | Image height constraint: `auto`, `20`, `300px` |
 | `--line-numbers`| `-n` | `false` | Display line numbers in code blocks |
 | `--hyperlinks`  | | `true` | Enable OSC 8 clickable terminal hyperlinks |
-| `--pager`       | | `true` | Pipe output to pager if longer than terminal screen |
+| `--pager`       | | `false` | Enable pager for output longer than terminal screen |
 | `--no-pager`    | | `false` | Disable pager output |
 | `--plain`       | | `false` | Output plain text without ANSI escape sequences |
 | `--debug`       | | `false` | Print diagnostic debug logs to stderr |
