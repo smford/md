@@ -79,15 +79,14 @@ func Detect() Info {
 	// WezTerm also supports OSC 1337 (iTerm2 image protocol)
 	supportsOSC1337 := isITerm || termProgram == "WezTerm"
 
-	// Modern terminals supporting OSC 8 hyperlinks
-	supportsOSC8 := isITerm ||
+	// Modern terminals supporting OSC 8 hyperlinks (excluding tmux and Apple_Terminal which leak OSC 8 sequences)
+	supportsOSC8 := !isTmux && (isITerm ||
 		termProgram == "WezTerm" ||
 		termProgram == "vscode" ||
 		termProgram == "ghostty" ||
-		termProgram == "Apple_Terminal" ||
 		os.Getenv("VTE_VERSION") != "" ||
 		strings.Contains(termName, "kitty") ||
-		strings.Contains(termName, "alacritty")
+		strings.Contains(termName, "alacritty"))
 
 	// Truecolor detection
 	colorTerm := os.Getenv("COLORTERM")
@@ -107,7 +106,7 @@ func Detect() Info {
 	}
 }
 
-// FormatHyperlink formats an OSC 8 hyperlink sequence if supported.
+// FormatHyperlink formats an OSC 8 hyperlink sequence using universal BEL (\a) terminator.
 func FormatHyperlink(url, text string, enable bool) string {
 	if !enable || url == "" {
 		if text != "" {
@@ -115,8 +114,8 @@ func FormatHyperlink(url, text string, enable bool) string {
 		}
 		return url
 	}
-	// OSC 8 ;; URL \ ESC \ text ESC ] 8 ;; ESC \
-	return fmt.Sprintf("\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\", url, text)
+	// OSC 8 ;; URL BEL text OSC 8 ;; BEL
+	return fmt.Sprintf("\x1b]8;;%s\a%s\x1b]8;;\a", url, text)
 }
 
 // RunPager launches a pager (such as $PAGER or less -R -F -X) and streams content to it.

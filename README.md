@@ -105,6 +105,7 @@ md --plain guide.md | grep "Configuration"
 | `--image-height`| | `"auto"` | Image height constraint: `auto`, `20`, `300px` |
 | `--line-numbers`| `-n` | `false` | Display line numbers in code blocks |
 | `--hyperlinks`  | | `true` | Enable OSC 8 clickable terminal hyperlinks |
+| `--no-hyperlinks`| | `false` | Disable OSC 8 clickable terminal hyperlinks (display full URLs) |
 | `--pager`       | | `false` | Enable pager for output longer than terminal screen |
 | `--no-pager`    | | `false` | Disable pager output |
 | `--plain`       | | `false` | Output plain text without ANSI escape sequences |

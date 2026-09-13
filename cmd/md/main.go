@@ -50,6 +50,7 @@ func handleBrokenPipe() {
 func newRootCmd() *cobra.Command {
 	opts := config.DefaultOptions()
 	var noPager bool
+	var noHyperlinks bool
 
 	cmd := &cobra.Command{
 		Use:     "md [flags] [file | URL ...]",
@@ -64,6 +65,9 @@ Unicode box borders, syntax-highlighted code blocks, and OSC 8 clickable hyperli
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if noPager {
 				opts.Pager = false
+			}
+			if noHyperlinks {
+				opts.Hyperlinks = false
 			}
 
 			ctx, cancel := context.WithCancel(cmd.Context())
@@ -82,6 +86,7 @@ Unicode box borders, syntax-highlighted code blocks, and OSC 8 clickable hyperli
 	flags.StringVar(&opts.ImageHeight, "image-height", "auto", "Image height constraint: auto, 20, 300px")
 	flags.BoolVarP(&opts.LineNumbers, "line-numbers", "n", false, "Show line numbers in code blocks")
 	flags.BoolVar(&opts.Hyperlinks, "hyperlinks", true, "Enable OSC 8 terminal hyperlinks")
+	flags.BoolVar(&noHyperlinks, "no-hyperlinks", false, "Disable OSC 8 terminal hyperlinks")
 	flags.BoolVar(&opts.Pager, "pager", false, "Enable pager for output longer than terminal screen")
 	flags.BoolVar(&noPager, "no-pager", false, "Disable pager output")
 	flags.BoolVar(&opts.Plain, "plain", false, "Output plain text without ANSI escape sequences or colors")

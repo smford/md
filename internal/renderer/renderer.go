@@ -658,9 +658,14 @@ func (s *renderState) renderInlineNode(node gast.Node) string {
 			return fmt.Sprintf("%s (%s)", linkText, url)
 		}
 
-		clickable := term.FormatHyperlink(url, linkText, s.renderer.opts.Hyperlinks && s.renderer.termInfo.HasOSC8)
-		styledLink := s.renderer.theme.Link.Render(clickable)
-		if linkText != url && !s.renderer.termInfo.HasOSC8 {
+		useOSC8 := s.renderer.opts.Hyperlinks && s.renderer.termInfo.HasOSC8 && !s.renderer.termInfo.IsTmux
+		if useOSC8 {
+			styledText := s.renderer.theme.Link.Render(linkText)
+			return term.FormatHyperlink(url, styledText, true)
+		}
+
+		styledLink := s.renderer.theme.Link.Render(linkText)
+		if linkText != url {
 			return fmt.Sprintf("%s (%s)", styledLink, s.renderer.theme.LinkURL.Render(url))
 		}
 		return styledLink
@@ -671,8 +676,12 @@ func (s *renderState) renderInlineNode(node gast.Node) string {
 		if s.renderer.opts.Plain {
 			return url
 		}
-		clickable := term.FormatHyperlink(url, label, s.renderer.opts.Hyperlinks && s.renderer.termInfo.HasOSC8)
-		return s.renderer.theme.Link.Render(clickable)
+		useOSC8 := s.renderer.opts.Hyperlinks && s.renderer.termInfo.HasOSC8 && !s.renderer.termInfo.IsTmux
+		if useOSC8 {
+			styledText := s.renderer.theme.Link.Render(label)
+			return term.FormatHyperlink(url, styledText, true)
+		}
+		return s.renderer.theme.Link.Render(label)
 
 	case *extast.TaskCheckBox:
 		if n.IsChecked {

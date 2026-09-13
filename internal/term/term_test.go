@@ -45,7 +45,7 @@ func TestFormatHyperlink(t *testing.T) {
 			url:    "https://example.com",
 			text:   "Example",
 			enable: true,
-			want:   "\x1b]8;;https://example.com\x1b\\Example\x1b]8;;\x1b\\",
+			want:   "\x1b]8;;https://example.com\aExample\x1b]8;;\a",
 		},
 		{
 			name:   "empty url",

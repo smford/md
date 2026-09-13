@@ -7,7 +7,7 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
-var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]|\x1b\]8;;.*?\x1b\\|\x1b\]8;;\x1b\\`)
+var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]|\x1b\]8;;.*?(?:\x1b\\|\a)|\x1b\]8;;(?:\x1b\\|\a)`)
 
 // StripANSI removes ANSI escape sequences from a string.
 func StripANSI(s string) string {
