@@ -18,6 +18,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rivo/uniseg"
 	_ "golang.org/x/image/webp"
 )
 
@@ -232,23 +233,153 @@ func FormatITerm2(data []byte, filename string, opts ITerm2Options) string {
 	return seq
 }
 
-// FormatFallback renders a clean ASCII / Unicode placeholder for terminals that don't support inline images.
-func FormatFallback(altText, src string, errMsg string) string {
-	var sb strings.Builder
+// formatFieldLines formats a prefixed field (e.g. "Source: ...") wrapping words to innerWidth,
+// indenting continuation lines under the prefix.
+func formatFieldLines(prefix string, val string, innerWidth int) []string {
+	prefixWidth := uniseg.StringWidth(prefix)
+	indent := strings.Repeat(" ", prefixWidth)
+	words := strings.Fields(val)
+	if len(words) == 0 {
+		return []string{prefix}
+	}
+
+	var lines []string
+	var cur strings.Builder
+	cur.WriteString(prefix)
+	curWidth := prefixWidth
+
+	for _, word := range words {
+		wLen := uniseg.StringWidth(word)
+		space := 1
+		if curWidth == prefixWidth {
+			space = 0
+		}
+
+		if curWidth+space+wLen <= innerWidth {
+			if space > 0 {
+				cur.WriteByte(' ')
+				curWidth++
+			}
+			cur.WriteString(word)
+			curWidth += wLen
+		} else {
+			lines = append(lines, cur.String())
+			cur.Reset()
+			cur.WriteString(indent)
+			curWidth = prefixWidth
+
+			if wLen > innerWidth-prefixWidth {
+				g := uniseg.NewGraphemes(word)
+				for g.Next() {
+					cluster := g.Str()
+					cw := g.Width()
+					if curWidth+cw > innerWidth {
+						lines = append(lines, cur.String())
+						cur.Reset()
+						cur.WriteString(indent)
+						curWidth = prefixWidth
+					}
+					cur.WriteString(cluster)
+					curWidth += cw
+				}
+			} else {
+				cur.WriteString(word)
+				curWidth += wLen
+			}
+		}
+	}
+	if cur.Len() > 0 {
+		lines = append(lines, cur.String())
+	}
+	return lines
+}
+
+// FormatFallback renders a clean, fully enclosed rounded Unicode card
+// for terminals that don't support inline images or when an image fails to load.
+func FormatFallback(altText, src string, errMsg string, maxWidth ...int) string {
 	if altText == "" {
 		altText = "Untitled Image"
 	}
 
-	if errMsg != "" {
-		sb.WriteString(fmt.Sprintf("  ┌─ ⚠️  [Image Error] %s ─┐\n", altText))
-		sb.WriteString(fmt.Sprintf("  │  Source: %s\n", src))
-		sb.WriteString(fmt.Sprintf("  │  Reason: %s\n", errMsg))
-		sb.WriteString("  └──────────────────────────────────────────────────────────┘")
-	} else {
-		sb.WriteString(fmt.Sprintf("  ┌─ 🖼️  [Image: %s] ─┐\n", altText))
-		sb.WriteString(fmt.Sprintf("  │  Source: %s\n", src))
-		sb.WriteString("  └──────────────────────────────────────────────────────────┘")
+	termWidth := 80
+	if len(maxWidth) > 0 && maxWidth[0] > 0 {
+		termWidth = maxWidth[0]
 	}
+	if termWidth < 40 {
+		termWidth = 40
+	}
+
+	var title string
+	if errMsg != "" {
+		title = fmt.Sprintf("╭─── ⚠️  [Image Error] %s ", altText)
+	} else {
+		title = fmt.Sprintf("╭─── 🖼️  [Image: %s] ", altText)
+	}
+
+	titleWidth := uniseg.StringWidth(title)
+
+	// Determine card width
+	w := 70
+	if titleWidth+4 > w {
+		w = titleWidth + 4
+	}
+	if w > termWidth {
+		w = termWidth
+	}
+	if titleWidth+3 > w {
+		excess := (titleWidth + 3) - w
+		runes := []rune(altText)
+		if len(runes) > excess+3 {
+			altText = string(runes[:len(runes)-excess-3]) + "..."
+			if errMsg != "" {
+				title = fmt.Sprintf("╭─── ⚠️  [Image Error] %s ", altText)
+			} else {
+				title = fmt.Sprintf("╭─── 🖼️  [Image: %s] ", altText)
+			}
+			titleWidth = uniseg.StringWidth(title)
+		}
+	}
+
+	headerDashes := w - titleWidth - 1
+	if headerDashes < 2 {
+		headerDashes = 2
+		w = titleWidth + headerDashes + 1
+	}
+	topLine := title + strings.Repeat("─", headerDashes) + "╮"
+
+	innerWidth := w - 4 // 2 chars for "│ " and 2 chars for " │"
+	if innerWidth < 10 {
+		innerWidth = 10
+	}
+
+	var contentLines []string
+	contentLines = append(contentLines, formatFieldLines("Source: ", src, innerWidth)...)
+	if errMsg != "" {
+		contentLines = append(contentLines, formatFieldLines("Reason: ", errMsg, innerWidth)...)
+	}
+
+	var sb strings.Builder
+	sb.WriteString(topLine)
+	sb.WriteString("\n")
+
+	for _, line := range contentLines {
+		lw := uniseg.StringWidth(line)
+		padding := innerWidth - lw
+		if padding < 0 {
+			padding = 0
+		}
+		sb.WriteString("│ ")
+		sb.WriteString(line)
+		sb.WriteString(strings.Repeat(" ", padding))
+		sb.WriteString(" │\n")
+	}
+
+	footerDashes := w - 2
+	if footerDashes < 4 {
+		footerDashes = 4
+	}
+	bottomLine := "╰" + strings.Repeat("─", footerDashes) + "╯"
+	sb.WriteString(bottomLine)
 
 	return sb.String()
 }

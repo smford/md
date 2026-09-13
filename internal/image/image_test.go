@@ -13,6 +13,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/rivo/uniseg"
 )
 
 // Helper to generate a 2x2 PNG in memory
@@ -164,13 +166,84 @@ func TestFormatITerm2(t *testing.T) {
 }
 
 func TestFormatFallback(t *testing.T) {
-	out := FormatFallback("Alt Text", "test.png", "")
-	if !strings.Contains(out, "Alt Text") || !strings.Contains(out, "test.png") {
-		t.Errorf("unexpected fallback output: %s", out)
+	tests := []struct {
+		name     string
+		alt      string
+		src      string
+		errMsg   string
+		maxWidth int
+	}{
+		{
+			name:     "standard fallback without error",
+			alt:      "Architecture Diagram",
+			src:      "https://example.com/arch.png",
+			errMsg:   "",
+			maxWidth: 80,
+		},
+		{
+			name:     "error fallback with long path and error message",
+			alt:      "Missing Asset Test",
+			src:      "./assets/does-not-exist-for-testing.png",
+			errMsg:   "file not found: stat /Users/asc/git/md/assets/does-not-exist-for-testing.png: no such file or directory",
+			maxWidth: 80,
+		},
+		{
+			name:     "constrained terminal width",
+			alt:      "Very Long Alternative Description For An Important Image In The System",
+			src:      "/var/log/systems/very/deep/nested/path/to/an/image/file/that/might/wrap.png",
+			errMsg:   "permission denied: access restricted to admin role",
+			maxWidth: 50,
+		},
 	}
 
-	errOut := FormatFallback("Alt Text", "test.png", "not found")
-	if !strings.Contains(errOut, "Image Error") || !strings.Contains(errOut, "not found") {
-		t.Errorf("unexpected error fallback output: %s", errOut)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			out := FormatFallback(tt.alt, tt.src, tt.errMsg, tt.maxWidth)
+
+			lines := strings.Split(out, "\n")
+			if len(lines) < 3 {
+				t.Fatalf("expected at least 3 lines, got %d", len(lines))
+			}
+
+			// Verify rounded corners
+			if !strings.HasPrefix(lines[0], "╭") || !strings.HasSuffix(lines[0], "╮") {
+				t.Errorf("top border must start with ╭ and end with ╮, got: %q", lines[0])
+			}
+			lastLine := lines[len(lines)-1]
+			if !strings.HasPrefix(lastLine, "╰") || !strings.HasSuffix(lastLine, "╯") {
+				t.Errorf("bottom border must start with ╰ and end with ╯, got: %q", lastLine)
+			}
+
+			// Verify all middle lines have vertical borders │ ... │
+			for i := 1; i < len(lines)-1; i++ {
+				line := lines[i]
+				if !strings.HasPrefix(line, "│ ") || !strings.HasSuffix(line, " │") {
+					t.Errorf("line %d does not have │ ... │ borders: %q", i, line)
+				}
+			}
+
+			// Verify visual width symmetry: every line must have the exact same visual width
+			topWidth := uniseg.StringWidth(lines[0])
+			for i, line := range lines {
+				w := uniseg.StringWidth(line)
+				if w != topWidth {
+					t.Errorf("line %d visual width %d does not match top border width %d: %q", i, w, topWidth, line)
+				}
+			}
+
+			// Check content presence
+			if !strings.Contains(out, tt.src) && !strings.Contains(out, "...") {
+				// note: long src might be wrapped across lines, check fields
+				words := strings.Fields(tt.src)
+				for _, word := range words {
+					if !strings.Contains(out, word) {
+						t.Errorf("expected output to contain %q", word)
+					}
+				}
+			}
+			if tt.errMsg != "" && !strings.Contains(out, "Image Error") {
+				t.Errorf("expected output to contain Image Error, got: %s", out)
+			}
+		})
 	}
 }

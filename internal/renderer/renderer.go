@@ -565,7 +565,7 @@ func (s *renderState) renderImage(img *gast.Image) string {
 	if shouldRender {
 		data, filename, err := image.Fetch(s.ctx, dest, s.renderer.opts.BasePath, s.renderer.httpClient)
 		if err != nil {
-			return image.FormatFallback(altText, dest, err.Error())
+			return image.FormatFallback(altText, dest, err.Error(), s.width())
 		}
 
 		opts := image.ITerm2Options{
@@ -590,7 +590,7 @@ func (s *renderState) renderImage(img *gast.Image) string {
 		return seq
 	}
 
-	return image.FormatFallback(altText, dest, "")
+	return image.FormatFallback(altText, dest, "", s.width())
 }
 
 func (s *renderState) renderInlines(node gast.Node) string {
