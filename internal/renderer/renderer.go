@@ -388,9 +388,31 @@ func (s *renderState) highlightCode(code, lang string) string {
 	highlightedLines := strings.Split(buf.String(), "\n")
 
 	// Frame code block with title header
-	w := s.width()
+	termWidth := s.width()
+	if termWidth <= 0 {
+		termWidth = 80
+	}
+
+	w := termWidth
 	if w > 100 {
 		w = 100
+	}
+
+	maxLineWidth := 0
+	for _, l := range highlightedLines {
+		lw := table.VisualWidth(l)
+		if lw > maxLineWidth {
+			maxLineWidth = lw
+		}
+	}
+
+	basePrefixWidth := 2 // "│ "
+	if s.renderer.opts.LineNumbers {
+		basePrefixWidth = 8 // "│ %3s │ "
+	}
+	minNeeded := maxLineWidth + basePrefixWidth + 2 // 2 for " │"
+	if minNeeded > w && minNeeded <= termWidth {
+		w = minNeeded
 	}
 
 	displayLang := lang
@@ -403,6 +425,7 @@ func (s *renderState) highlightCode(code, lang string) string {
 	headerDashes := w - titleWidth - 1
 	if headerDashes < 2 {
 		headerDashes = 2
+		w = titleWidth + headerDashes + 1
 	}
 	header := title + strings.Repeat("─", headerDashes) + "╮"
 
@@ -412,15 +435,26 @@ func (s *renderState) highlightCode(code, lang string) string {
 
 	for idx, line := range highlightedLines {
 		var linePrefix string
+		var prefixWidth int
 		if s.renderer.opts.LineNumbers {
 			numStr := strconv.Itoa(idx + 1)
 			linePrefix = fmt.Sprintf("│ %3s │ ", numStr)
+			prefixWidth = table.VisualWidth(linePrefix)
 		} else {
 			linePrefix = "│ "
+			prefixWidth = 2
+		}
+
+		lineWidth := table.VisualWidth(line)
+		padding := w - prefixWidth - lineWidth - 2
+		if padding < 0 {
+			padding = 0
 		}
 
 		sb.WriteString(s.renderer.theme.CodeBlockBorder.Render(linePrefix))
 		sb.WriteString(line)
+		sb.WriteString(strings.Repeat(" ", padding))
+		sb.WriteString(s.renderer.theme.CodeBlockBorder.Render(" │"))
 		if idx < len(highlightedLines)-1 {
 			sb.WriteString("\n")
 		}
