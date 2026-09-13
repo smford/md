@@ -8,7 +8,9 @@ status: "Resolved"
 
 # Production SRE Incident & Architecture Review
 
-> **Incident Summary**: At 14:22 UTC, the automated canary detector flagged a 3.4% error rate increase in the primary API gateway. SRE mitigation procedures were triggered immediately.
+> **Incident Summary**: At 14:22 UTC, the automated canary detector flagged a\
+> 3.4% error rate increase in the primary API gateway. SRE mitigation procedures\
+> were triggered immediately.
 
 ---
 
