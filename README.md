@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/smford/md/actions/workflows/ci.yml/badge.svg)](https://github.com/smford/md/actions/workflows/ci.yml)
 [![Go Version](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://golang.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 [![Platform: macOS iTerm2](https://img.shields.io/badge/Platform-macOS%20iTerm2-blue?logo=apple)](https://iterm2.com)
 
 `md` is a production-grade terminal Markdown viewer written in Go, specifically engineered for macOS and optimized for [iTerm2](https://iterm2.com).
@@ -211,4 +211,4 @@ make vet
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+GNU Affero General Public License v3.0 (AGPL-3.0). See [LICENSE](LICENSE) for details.
