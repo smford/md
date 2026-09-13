@@ -40,6 +40,33 @@ func TestWrapWord(t *testing.T) {
 	}
 }
 
+func TestWrapWord_ANSI(t *testing.T) {
+	boldText := "\x1b[1;38;5;255mDistributed Consensus\x1b[0m"
+	wrapped := WrapWord(boldText, 10)
+	for i, l := range wrapped {
+		w := VisualWidth(l)
+		if w > 10 {
+			t.Errorf("line %d width %d exceeds max 10: %q", i, w, l)
+		}
+		stripped := StripANSI(l)
+		if strings.Contains(stripped, "5m") || strings.Contains(stripped, "[") {
+			t.Errorf("line %d has leaked escape sequence: %q", i, l)
+		}
+	}
+
+	// When maxWidth is large enough for individual words (15), words should not be split
+	wrapped15 := WrapWord(boldText, 15)
+	if len(wrapped15) != 2 {
+		t.Fatalf("expected 2 lines for width 15, got %d", len(wrapped15))
+	}
+	if StripANSI(wrapped15[0]) != "Distributed" {
+		t.Errorf("expected first line 'Distributed', got %q", StripANSI(wrapped15[0]))
+	}
+	if StripANSI(wrapped15[1]) != "Consensus" {
+		t.Errorf("expected second line 'Consensus', got %q", StripANSI(wrapped15[1]))
+	}
+}
+
 func TestTable_Render_AlignmentAndWrapping(t *testing.T) {
 	tbl := New([]string{"Service", "Status", "Latency"})
 	tbl.SetAlignments([]Alignment{AlignLeft, AlignCenter, AlignRight})
@@ -108,6 +135,47 @@ func TestTable_MicroserviceSLAMatrix(t *testing.T) {
 		w := VisualWidth(line)
 		if w != expectedWidth {
 			t.Errorf("line %d visual width %d != expected width %d:\n%s", i, w, expectedWidth, line)
+		}
+	}
+}
+
+func TestTable_WordWrapping_Section13(t *testing.T) {
+	for _, width := range []int{80, 100, 120, 150} {
+		tbl := New([]string{"Component", "Responsibility & Architecture", "Failure Modes & Risk", "Mitigation Runbook"})
+		tbl.SetAlignments([]Alignment{AlignLeft, AlignLeft, AlignLeft, AlignLeft})
+		tbl.AddRow(
+			"\x1b[1;38;5;255mIngress Controller\x1b[0m",
+			"Terminates external TLS connections and directs HTTP traffic across internal Kubernetes service pods.",
+			"High connection concurrency causing epoll thread pool starvation and dropped SYN packets.",
+			"Scale horizontal replicas and tune net.core.somaxconn and worker connections.",
+		)
+		tbl.AddRow(
+			"\x1b[1;38;5;255mDistributed Consensus\x1b[0m",
+			"Raft-based distributed key-value storage maintaining cluster configuration state and leader elections.",
+			"Split-brain partition during network transit degradation between availability zones.",
+			"Ensure odd quorum voting nodes and verify heartbeat election timeouts.",
+		)
+		tbl.AddRow(
+			"\x1b[1;38;5;255mTime-Series Engine\x1b[0m",
+			"High-throughput metrics ingestion pipeline storing Prometheus metrics and alerting telemetry.",
+			"Disk IOPS saturation during high-cardinality metric spikes causing ingest backpressure.",
+			"Enable write-ahead log compression and drop high-cardinality label dimensions.",
+		)
+		tbl.MaxWidth = width
+
+		out := tbl.Render()
+		lines := strings.Split(out, "\n")
+		expectedWidth := VisualWidth(lines[0])
+
+		for i, line := range lines {
+			w := VisualWidth(line)
+			if w != expectedWidth {
+				t.Errorf("width %d: line %d visual width %d != expected width %d:\n%s", width, i, w, expectedWidth, line)
+			}
+			stripped := StripANSI(line)
+			if strings.Contains(stripped, "5m") {
+				t.Errorf("width %d: line %d leaked ANSI escape fragment '5m': %s", width, i, stripped)
+			}
 		}
 	}
 }

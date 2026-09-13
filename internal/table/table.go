@@ -315,44 +315,113 @@ func (t *Table) computeColumnWidths(numCols int, rows [][]string) []int {
 		return res
 	}
 
-	// Otherwise, distribute available space proportionally to natural widths
+	// Cap minWordWidths at naturalWidths and enforce minimum of 3
+	for i := 0; i < numCols; i++ {
+		if minWordWidths[i] > naturalWidths[i] {
+			minWordWidths[i] = naturalWidths[i]
+		}
+		if minWordWidths[i] < 3 {
+			minWordWidths[i] = 3
+		}
+	}
+
+	totalMin := 0
+	for _, mw := range minWordWidths {
+		totalMin += mw
+	}
+
 	res := make([]int, numCols)
 	usedSpace := 0
 
-	for i := 0; i < numCols; i++ {
-		w := 3
-		if totalNatural > 0 {
-			w = (naturalWidths[i] * availableForContent) / totalNatural
-		}
-		if w < 3 {
-			w = 3
-		}
-		res[i] = w
-		usedSpace += w
-	}
-
-	// Distribute any remaining space to the columns with the largest difference between natural and allocated
-	remaining := availableForContent - usedSpace
-	for remaining > 0 {
-		bestCol := -1
-		maxDeficit := -1
+	if availableForContent >= totalMin {
+		// All columns can satisfy their minWordWidth without word-splitting!
+		// 1. Allocate minWordWidth to each column
 		for i := 0; i < numCols; i++ {
-			deficit := naturalWidths[i] - res[i]
-			if deficit > maxDeficit {
-				maxDeficit = deficit
-				bestCol = i
+			res[i] = minWordWidths[i]
+			usedSpace += res[i]
+		}
+
+		// 2. Distribute remaining space proportionally based on deficit (natural - min)
+		remaining := availableForContent - usedSpace
+		totalDeficit := 0
+		for i := 0; i < numCols; i++ {
+			deficit := naturalWidths[i] - minWordWidths[i]
+			if deficit > 0 {
+				totalDeficit += deficit
 			}
 		}
-		if bestCol == -1 || maxDeficit <= 0 {
-			// If all natural widths satisfied, distribute 1 to each col cyclically
-			for i := 0; i < numCols && remaining > 0; i++ {
-				res[i]++
-				remaining--
+
+		if totalDeficit > 0 && remaining > 0 {
+			for i := 0; i < numCols; i++ {
+				deficit := naturalWidths[i] - minWordWidths[i]
+				if deficit > 0 {
+					extra := (deficit * remaining) / totalDeficit
+					if extra > deficit {
+						extra = deficit
+					}
+					res[i] += extra
+					usedSpace += extra
+				}
 			}
-			break
 		}
-		res[bestCol]++
-		remaining--
+
+		// 3. Distribute any remaining space to columns still below natural width
+		leftover := availableForContent - usedSpace
+		for leftover > 0 {
+			bestCol := -1
+			maxDef := -1
+			for i := 0; i < numCols; i++ {
+				def := naturalWidths[i] - res[i]
+				if def > maxDef {
+					maxDef = def
+					bestCol = i
+				}
+			}
+			if bestCol == -1 || maxDef <= 0 {
+				// All columns reached natural width, distribute remaining cyclically
+				for i := 0; i < numCols && leftover > 0; i++ {
+					res[i]++
+					leftover--
+				}
+				break
+			}
+			res[bestCol]++
+			leftover--
+		}
+	} else {
+		// Terminal is severely constrained: distribute proportionally from total available
+		for i := 0; i < numCols; i++ {
+			w := 3
+			if totalNatural > 0 {
+				w = (naturalWidths[i] * availableForContent) / totalNatural
+			}
+			if w < 3 {
+				w = 3
+			}
+			res[i] = w
+			usedSpace += w
+		}
+		leftover := availableForContent - usedSpace
+		for leftover > 0 {
+			bestCol := -1
+			maxDef := -1
+			for i := 0; i < numCols; i++ {
+				def := naturalWidths[i] - res[i]
+				if def > maxDef {
+					maxDef = def
+					bestCol = i
+				}
+			}
+			if bestCol == -1 || maxDef <= 0 {
+				for i := 0; i < numCols && leftover > 0; i++ {
+					res[i]++
+					leftover--
+				}
+				break
+			}
+			res[bestCol]++
+			leftover--
+		}
 	}
 
 	return res
