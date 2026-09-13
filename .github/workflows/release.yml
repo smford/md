@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build Multi-Arch Release Binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [ darwin, linux ]
+        goarch: [ amd64, arm64 ]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Build Binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          OUTPUT_NAME="md-${TAG_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}"
+          mkdir -p dist
+          go build -ldflags "-X main.version=${TAG_NAME} -X main.commit=${GITHUB_SHA::7} -X main.date=$(date -u +'%Y-%m-%dT%H:%M:%SZ') -s -w" -o "dist/${OUTPUT_NAME}" ./cmd/md
+          tar -czvf "dist/${OUTPUT_NAME}.tar.gz" -C dist "${OUTPUT_NAME}"
+          sha256sum "dist/${OUTPUT_NAME}.tar.gz" > "dist/${OUTPUT_NAME}.tar.gz.sha256"
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*

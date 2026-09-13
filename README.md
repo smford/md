@@ -1,0 +1,213 @@
+# md: Terminal Markdown Viewer for macOS iTerm2
+
+[![CI](https://github.com/smford/md/actions/workflows/ci.yml/badge.svg)](https://github.com/smford/md/actions/workflows/ci.yml)
+[![Go Version](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://golang.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform: macOS iTerm2](https://img.shields.io/badge/Platform-macOS%20iTerm2-blue?logo=apple)](https://iterm2.com)
+
+`md` is a production-grade terminal Markdown viewer written in Go, specifically engineered for macOS and optimized for [iTerm2](https://iterm2.com).
+
+Designed through a Senior Site Reliability Engineering lens, `md` solves common terminal Markdown rendering issues: **garbled wide tables**, **missing or broken images**, **pipe panics**, and **unreadable terminal wrapping**.
+
+---
+
+## Key Features
+
+### 1. Accurate Inline Image Rendering (iTerm2 OSC 1337)
+- **Native iTerm2 Protocol**: Directly transmits image bitstreams using the proprietary `OSC 1337` inline image escape sequence.
+- **Multi-Format Support**: Displays PNG, JPEG, GIF (including animated GIFs), WebP, TIFF, and SVG natively.
+- **Smart Asset Resolution**: Resolves relative file paths (e.g. `![diagram](./assets/arch.png)`) relative to the Markdown document's location, not just current working directory.
+- **Resilient Remote Fetching**: Streams `http://` and `https://` images with bounded HTTP timeouts (10s) and a 25MB safety buffer to protect system memory.
+- **tmux Passthrough**: Transparently wraps image payloads in tmux DCS escape sequences (`\033Ptmux;...`) when running inside tmux sessions.
+- **Graceful Degradation**: Automatically falls back to formatted diagnostic placeholders on unsupported terminals or when `--images=never` is selected.
+
+### 2. High-Fidelity Table Layout Engine
+- **Strict Column Alignment**: Preserves Markdown syntax alignments (`:---` Left, `:---:` Center, `---:` Right) across headers and data rows.
+- **Unicode & Emoji Width Precision**: Calculates visual column boundaries using terminal runewidth metrics and ANSI stripping—eliminating jagged borders caused by emojis (`✅`, `⚠️`, `🚀`) or CJK glyphs.
+- **Intelligent Word-Wrapping**: When tables exceed the available terminal columns, columns are proportionally sized and wrapped cleanly at word boundaries instead of overflowing the screen.
+- **Multi-Line Row Synchronization**: Aligns wrapped multi-line cells seamlessly with matching vertical border continuations.
+- **Customizable Borders**: Switch between `rounded`, `box` (sharp), `double`, `ascii`, `markdown`, and `minimal` borders via `--table-style`.
+
+### 3. Syntax Highlighting & Code Blocks
+- **Chroma Syntax Highlighting**: Automatic language detection and theme matching (Dracula, Monokai, Solarized, GitHub).
+- **Framed Code Enclosures**: Code blocks are enclosed in rounded border cards with language tags.
+- **Line Numbers**: Toggle line numbers via `-n` / `--line-numbers`.
+
+### 4. Clickable OSC 8 Hyperlinks
+- Terminal links render as native OSC 8 clickable hyperlinks in iTerm2—`Cmd+Click` on any link text to open the target URL directly in your browser.
+
+### 5. Production SRE Reliability
+- **Safe Broken Pipes (`EPIPE`)**: Gracefully handles downstream pipe termination (e.g. `md doc.md | head -n 5`) without emitting runtime panics or broken pipe error traces.
+- **Interactive Pager**: When stdout is connected to a TTY and output exceeds terminal height, automatically launches `$PAGER` (defaulting to `less -R -F -X`).
+- **Plain Mode for Scripting**: Use `--plain` to strip all ANSI codes and borders, outputting clean plain text suitable for `grep`, `awk`, or saving to log files.
+- **Built-in Diagnostics (`md doctor`)**: Inspect terminal capabilities, iTerm2 detection, truecolor, and inline graphic protocols in one command.
+
+---
+
+## Installation
+
+### From Source (Go 1.24+)
+
+```bash
+git clone https://github.com/smford/md.git
+cd md
+make install
+```
+
+This installs the `md` binary into your `$GOPATH/bin` (typically `~/go/bin/md`). Ensure `~/go/bin` is in your `$PATH`.
+
+### Manual Build
+
+```bash
+make build
+# Binary is generated at ./bin/md
+./bin/md --version
+```
+
+---
+
+## Usage
+
+```bash
+# View a local Markdown file
+md README.md
+
+# View a Markdown file from a remote URL
+md https://raw.githubusercontent.com/smford/md/main/README.md
+
+# Read from standard input (stdin)
+cat architecture.md | md
+
+# View with custom theme and table style
+md --theme dracula --table-style box doc.md
+
+# Constrain rendering width to 100 columns
+md -w 100 report.md
+
+# Show line numbers in code blocks
+md -n main.md
+
+# Plain text output (no ANSI escapes or colors)
+md --plain guide.md | grep "Configuration"
+```
+
+---
+
+## CLI Options
+
+| Flag | Shorthand | Default | Description |
+| :--- | :---: | :---: | :--- |
+| `--width` | `-w` | `0` | Explicit terminal width in columns (`0` = auto-detect) |
+| `--theme` | `-t` | `"dark"` | Color theme: `dark`, `light`, `dracula`, `monokai`, `solarized-dark`, `solarized-light`, `plain` |
+| `--table-style` | `-s` | `"rounded"` | Border style: `rounded`, `box`, `double`, `ascii`, `markdown`, `minimal` |
+| `--images` | `-i` | `"auto"` | Inline image mode: `auto` (iTerm2 only), `always`, `never` |
+| `--image-width` | | `"auto"` | Image width constraint: `auto`, `100%`, `80`, `400px` |
+| `--image-height`| | `"auto"` | Image height constraint: `auto`, `20`, `300px` |
+| `--line-numbers`| `-n` | `false` | Display line numbers in code blocks |
+| `--hyperlinks`  | | `true` | Enable OSC 8 clickable terminal hyperlinks |
+| `--pager`       | | `true` | Pipe output to pager if longer than terminal screen |
+| `--no-pager`    | | `false` | Disable pager output |
+| `--plain`       | | `false` | Output plain text without ANSI escape sequences |
+| `--debug`       | | `false` | Print diagnostic debug logs to stderr |
+
+---
+
+## Subcommands
+
+### `md doctor`
+Diagnoses your current terminal environment and verifies protocol support:
+
+```bash
+$ md doctor
+
+╭──────────────────────────────────────────────────────────────╮
+│           md - SRE Terminal Diagnostic & Capabilities        │
+╰──────────────────────────────────────────────────────────────╯
+
+╭──────────────────────────┬───────────────────┬─────────────────────────╮
+│ Diagnostic Check         │ Value             │ Status                  │
+├──────────────────────────┼───────────────────┼─────────────────────────┤
+│ OS / Architecture        │ darwin / arm64    │ PASS                    │
+│ Go Runtime Version       │ go1.26.0          │ PASS                    │
+│ Standard Output TTY      │ true              │ ENABLED                 │
+│ Terminal Dimensions      │ 120 cols x 36 rows│ INFO                    │
+│ TERM_PROGRAM             │ iTerm.app         │ INFO                    │
+│ TERM                     │ xterm-256color    │ INFO                    │
+│ iTerm2 Detection         │ true              │ DETECTED (macOS iTerm2) │
+│ Inside tmux Session      │ false             │ No                      │
+│ OSC 1337 (Inline Images) │ true              │ ENABLED                 │
+│ OSC 8 (Terminal Links)   │ true              │ ENABLED                 │
+│ TrueColor (24-bit)       │ true              │ ENABLED                 │
+╰──────────────────────────┴───────────────────┴─────────────────────────╯
+
+── Protocol Verification Test ──────────────────────────────────
+
+  • OSC 8 Hyperlink: Click here to test OSC 8 GitHub link
+  • OSC 1337 Inline Image Test (32x32 color gradient swatch):
+    [Inline graphic test rendered here]
+```
+
+---
+
+## tmux Configuration for iTerm2 Images
+
+If you run inside `tmux` within iTerm2, tmux blocks terminal escape sequences by default unless passthrough is enabled. To display images seamlessly inside tmux:
+
+1. Add the following line to `~/.tmux.conf`:
+   ```tmux
+   set -g allow-passthrough on
+   ```
+2. Reload tmux:
+   ```bash
+   tmux source-file ~/.tmux.conf
+   ```
+
+`md` automatically detects tmux sessions and formats images with the necessary DCS passthrough encapsulation.
+
+---
+
+## Architecture & Codebase Layout
+
+```
+.
+├── cmd/
+│   └── md/
+│       ├── main.go          # CLI entrypoint, flag parsing, broken pipe handling
+│       └── main_test.go     # CLI command execution tests
+├── internal/
+│   ├── config/              # Runtime configuration defaults and types
+│   ├── doctor/              # SRE terminal diagnostics & capability probe
+│   ├── image/               # OSC 1337 encoder, fetcher, dimension parser
+│   ├── renderer/            # Goldmark AST terminal renderer & walker
+│   ├── table/               # Accurate table engine, runewidth wrapping, borders
+│   ├── term/                # iTerm2 detection, TTY size, OSC 8 links, pager
+│   └── theme/               # Color palettes and Lipgloss/Chroma style sheets
+├── testdata/
+│   ├── demo.md              # Comprehensive demo document
+│   └── sample.png           # Test telemetry chart image
+├── Makefile                 # Build, test, lint, and install automation
+└── .github/workflows/       # GitHub Actions CI & release pipelines
+```
+
+---
+
+## Testing & Quality Assurance
+
+All packages include table-driven unit tests, race-detector coverage, and static analysis:
+
+```bash
+# Run unit tests
+make test
+
+# Run tests with the Go race detector enabled
+make test-race
+
+# Run go vet
+make vet
+```
+
+---
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
