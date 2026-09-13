@@ -5,6 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/termenv"
 	"github.com/smford/md/internal/config"
 	"github.com/smford/md/internal/table"
 )
@@ -170,3 +172,42 @@ date: 2026-09-13
 		t.Errorf("title row not found in output: %s", out)
 	}
 }
+
+func TestRenderer_NoANSILeaks(t *testing.T) {
+	testDoc := `# ` + "`md`" + ` Terminal Viewer: Comprehensive Validation Suite
+
+Welcome to the **` + "`md`" + `** test suite!
+
+## 1. ` + "`Header Two`" + ` with *italics* and **bold**
+
+### 1.1 ` + "`Subheader`" + `
+
+> Blockquote with ` + "`inline code`" + ` and [link](https://example.com)
+
+- List item with ` + "`code`" + `
+- Link with code: [` + "`code link`" + `](https://example.com)
+`
+	themes := []string{"dark", "light", "dracula", "monokai", "solarized-dark", "solarized-light"}
+	profiles := []termenv.Profile{termenv.ANSI256, termenv.TrueColor}
+
+	for _, themeName := range themes {
+		for _, profile := range profiles {
+			lipgloss.SetColorProfile(profile)
+			opts := config.DefaultOptions()
+			opts.Theme = themeName
+			r := New(opts)
+
+			out, err := r.Render(context.Background(), []byte(testDoc))
+			if err != nil {
+				t.Fatalf("Render failed for theme %s profile %v: %v", themeName, profile, err)
+			}
+			stripped := table.StripANSI(out)
+			if strings.Contains(stripped, "[48;") || strings.Contains(stripped, "[38;") || strings.Contains(stripped, "[0m") || strings.Contains(stripped, "[1;") {
+				t.Errorf("theme %s profile %v leaked ANSI sequences in plain text:\n%s", themeName, profile, stripped)
+			}
+		}
+	}
+	lipgloss.SetColorProfile(termenv.Ascii)
+}
+
+

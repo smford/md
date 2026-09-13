@@ -659,12 +659,16 @@ func (s *renderState) renderInlineNode(node gast.Node) string {
 		}
 
 		useOSC8 := s.renderer.opts.Hyperlinks && s.renderer.termInfo.HasOSC8 && !s.renderer.termInfo.IsTmux
+		linkStyle := s.renderer.theme.Link
+		if strings.Contains(linkText, "\x1b") {
+			linkStyle = linkStyle.Underline(false)
+		}
 		if useOSC8 {
-			styledText := s.renderer.theme.Link.Render(linkText)
+			styledText := linkStyle.Render(linkText)
 			return term.FormatHyperlink(url, styledText, true)
 		}
 
-		styledLink := s.renderer.theme.Link.Render(linkText)
+		styledLink := linkStyle.Render(linkText)
 		if linkText != url {
 			return fmt.Sprintf("%s (%s)", styledLink, s.renderer.theme.LinkURL.Render(url))
 		}

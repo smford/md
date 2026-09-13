@@ -100,7 +100,7 @@ func plainTheme() *Theme {
 func darkTheme() *Theme {
 	return &Theme{
 		Name:             "dark",
-		H1:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("39")).Underline(true),
+		H1:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("39")),
 		H2:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("75")),
 		H3:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("111")),
 		H4:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("147")),
@@ -131,7 +131,7 @@ func darkTheme() *Theme {
 func lightTheme() *Theme {
 	return &Theme{
 		Name:             "light",
-		H1:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("27")).Underline(true),
+		H1:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("27")),
 		H2:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("26")),
 		H3:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("25")),
 		H4:               lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("24")),
@@ -162,7 +162,7 @@ func lightTheme() *Theme {
 func draculaTheme() *Theme {
 	t := darkTheme()
 	t.Name = "dracula"
-	t.H1 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#bd93f9")).Underline(true)
+	t.H1 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#bd93f9"))
 	t.H2 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#ff79c6"))
 	t.H3 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#8be9fd"))
 	t.H4 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#50fa7b"))
@@ -178,7 +178,7 @@ func draculaTheme() *Theme {
 func monokaiTheme() *Theme {
 	t := darkTheme()
 	t.Name = "monokai"
-	t.H1 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#fd971f")).Underline(true)
+	t.H1 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#fd971f"))
 	t.H2 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#a6e22e"))
 	t.H3 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#66d9ef"))
 	t.H4 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#f92672"))
@@ -194,7 +194,7 @@ func monokaiTheme() *Theme {
 func solarizedDarkTheme() *Theme {
 	t := darkTheme()
 	t.Name = "solarized-dark"
-	t.H1 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#268bd2")).Underline(true)
+	t.H1 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#268bd2"))
 	t.H2 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#2aa198"))
 	t.H3 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#b58900"))
 	t.ChromaTheme = "solarized-dark"
@@ -204,7 +204,7 @@ func solarizedDarkTheme() *Theme {
 func solarizedLightTheme() *Theme {
 	t := lightTheme()
 	t.Name = "solarized-light"
-	t.H1 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#268bd2")).Underline(true)
+	t.H1 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#268bd2"))
 	t.H2 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#2aa198"))
 	t.H3 = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#b58900"))
 	t.ChromaTheme = "solarized-light"
