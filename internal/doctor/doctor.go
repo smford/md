@@ -25,9 +25,9 @@ func RunDiagnostics() string {
 
 	var sb stringsBuilder
 
-	sb.WriteString(titleStyle.Render("╭──────────────────────────────────────────────────────────────╮\n"))
-	sb.WriteString(titleStyle.Render("│           md - SRE Terminal Diagnostic & Capabilities        │\n"))
-	sb.WriteString(titleStyle.Render("╰──────────────────────────────────────────────────────────────╯\n\n"))
+	sb.WriteString(titleStyle.Render("╭──────────────────────────────────────────────────────────────╮") + "\n")
+	sb.WriteString(titleStyle.Render("│           md - SRE Terminal Diagnostic & Capabilities        │") + "\n")
+	sb.WriteString(titleStyle.Render("╰──────────────────────────────────────────────────────────────╯") + "\n\n")
 
 	// 1. Environment & Runtime Table
 	envTable := table.New([]string{"Diagnostic Check", "Value", "Status"})
@@ -70,7 +70,7 @@ func RunDiagnostics() string {
 	sb.WriteString("\n\n")
 
 	// 2. Interactive Protocol Verification Test
-	sb.WriteString(titleStyle.Render("── Protocol Verification Test ──────────────────────────────────\n\n"))
+	sb.WriteString(titleStyle.Render("── Protocol Verification Test ──────────────────────────────────") + "\n\n")
 
 	// Test link
 	testLink := term.FormatHyperlink("https://github.com/smford/md", "Click here to test OSC 8 GitHub link", true)
@@ -98,11 +98,11 @@ func RunDiagnostics() string {
 
 	// 3. SRE Recommendations
 	if info.IsTmux {
-		sb.WriteString(titleStyle.Render("── SRE Recommendations for tmux + iTerm2 ────────────────────────\n\n"))
+		sb.WriteString(titleStyle.Render("── SRE Recommendations for tmux + iTerm2 ────────────────────────") + "\n\n")
 		sb.WriteString("  1. To allow iTerm2 images inside tmux, ensure your ~/.tmux.conf has:\n")
-		sb.WriteString(infoStyle.Render("     set -g allow-passthrough on\n"))
+		sb.WriteString(infoStyle.Render("     set -g allow-passthrough on") + "\n")
 		sb.WriteString("  2. Reload tmux config with:\n")
-		sb.WriteString(infoStyle.Render("     tmux source-file ~/.tmux.conf\n\n"))
+		sb.WriteString(infoStyle.Render("     tmux source-file ~/.tmux.conf") + "\n\n")
 	}
 
 	return sb.String()

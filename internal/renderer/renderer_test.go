@@ -147,8 +147,26 @@ date: 2026-09-13
 	if err != nil {
 		t.Fatalf("Render frontmatter failed: %v", err)
 	}
-
 	if !strings.Contains(out, "Metadata") || !strings.Contains(out, "Post Title") {
 		t.Errorf("expected frontmatter card: %s", out)
+	}
+
+	// Verify lines inside metadata box start with "│" and end with "│"
+	lines := strings.Split(out, "\n")
+	foundTitle := false
+	for _, l := range lines {
+		if strings.Contains(l, "Post Title") {
+			foundTitle = true
+			trimmed := strings.TrimSpace(l)
+			if !strings.HasPrefix(trimmed, "│") || !strings.HasSuffix(trimmed, "│") {
+				t.Errorf("expected metadata row enclosed in vertical bars, got: %q", l)
+			}
+			if strings.HasPrefix(l, "       ") {
+				t.Errorf("detected excessive indentation on metadata line: %q", l)
+			}
+		}
+	}
+	if !foundTitle {
+		t.Errorf("title row not found in output: %s", out)
 	}
 }

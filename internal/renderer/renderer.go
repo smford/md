@@ -746,14 +746,66 @@ func (r *Renderer) extractFrontmatter(source []byte) ([]byte, string) {
 		return remainingSource, ""
 	}
 
-	// Format metadata box
 	lines := strings.Split(yamlContent, "\n")
-	var formatted strings.Builder
-	formatted.WriteString(r.theme.CodeBlockBorder.Render("╭─── Metadata ──────────────────────────────╮\n"))
+	maxLineWidth := 0
 	for _, l := range lines {
-		formatted.WriteString(r.theme.CodeBlockBorder.Render("│ ") + r.theme.TableCell.Render(l) + "\n")
+		lw := table.VisualWidth(l)
+		if lw > maxLineWidth {
+			maxLineWidth = lw
+		}
 	}
-	formatted.WriteString(r.theme.CodeBlockBorder.Render("╰───────────────────────────────────────────╯"))
+
+	termWidth := r.opts.Width
+	if termWidth <= 0 {
+		termWidth = r.termInfo.Width
+	}
+	if termWidth <= 0 {
+		termWidth = 80
+	}
+
+	w := 60
+	minNeeded := maxLineWidth + 4
+	if minNeeded > w {
+		w = minNeeded
+	}
+	if w > termWidth {
+		w = termWidth
+	}
+	if w > 100 {
+		w = 100
+	}
+
+	title := "╭─── Metadata "
+	titleWidth := table.VisualWidth(title)
+	headerDashes := w - titleWidth - 1
+	if headerDashes < 2 {
+		headerDashes = 2
+		w = titleWidth + headerDashes + 1
+	}
+	header := title + strings.Repeat("─", headerDashes) + "╮"
+
+	var formatted strings.Builder
+	formatted.WriteString(r.theme.CodeBlockBorder.Render(header))
+	formatted.WriteString("\n")
+
+	for _, l := range lines {
+		lineWidth := table.VisualWidth(l)
+		padding := w - 2 - lineWidth - 2
+		if padding < 0 {
+			padding = 0
+		}
+		formatted.WriteString(r.theme.CodeBlockBorder.Render("│ "))
+		formatted.WriteString(r.theme.TableCell.Render(l))
+		formatted.WriteString(strings.Repeat(" ", padding))
+		formatted.WriteString(r.theme.CodeBlockBorder.Render(" │") + "\n")
+	}
+
+	footerDashes := w - 2
+	if footerDashes < 4 {
+		footerDashes = 4
+	}
+	footer := "╰" + strings.Repeat("─", footerDashes) + "╯"
+	formatted.WriteString(r.theme.CodeBlockBorder.Render(footer))
 
 	return remainingSource, formatted.String()
 }
