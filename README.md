@@ -9,6 +9,10 @@
 
 Designed through a Senior Site Reliability Engineering lens, `md` solves common terminal Markdown rendering issues: **garbled wide tables**, **missing or broken images**, **pipe panics**, and **unreadable terminal wrapping**.
 
+<p align="center">
+  <img src="assets/screenshots/demo-overview.png" alt="md Terminal Markdown Viewer in macOS iTerm2" width="850" />
+</p>
+
 ---
 
 ## Key Features
@@ -27,6 +31,10 @@ Designed through a Senior Site Reliability Engineering lens, `md` solves common 
 - **Intelligent Word-Wrapping**: When tables exceed the available terminal columns, columns are proportionally sized and wrapped cleanly at word boundaries instead of overflowing the screen.
 - **Multi-Line Row Synchronization**: Aligns wrapped multi-line cells seamlessly with matching vertical border continuations.
 - **Customizable Borders**: Switch between `rounded`, `box` (sharp), `double`, `ascii`, `markdown`, and `minimal` borders via `--table-style`.
+
+<p align="center">
+  <img src="assets/screenshots/tables-and-alignment.png" alt="High-Fidelity Tables and Alignment Engine" width="850" />
+</p>
 
 ### 3. Syntax Highlighting & Code Blocks
 - **Chroma Syntax Highlighting**: Automatic language detection and theme matching (Dracula, Monokai, Solarized, GitHub).
@@ -147,6 +155,10 @@ $ md doctor
   • OSC 1337 Inline Image Test (32x32 color gradient swatch):
     [Inline graphic test rendered here]
 ```
+
+<p align="center">
+  <img src="assets/screenshots/doctor-diagnostics.png" alt="md doctor Terminal Diagnostics and Capabilities" width="850" />
+</p>
 
 ---
 
