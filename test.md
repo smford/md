@@ -40,7 +40,7 @@ This section tests column alignment (`:---` Left, `:---:` Center, `---:` Right),
 
 ### 1.2 Unicode & Multi-Byte Character Table (Visual Width Accuracy)
 
-Terminal renderers frequently break on wide characters (East Asian Width / CJK and emojis). This table verifies that `runewidth` visual calculation prevents border misalignment:
+Terminal renderers frequently break on wide characters (East Asian Width / CJK and emojis). This table verifies that Unicode grapheme cluster visual calculation prevents border misalignment:
 
 | Region | Regional Hub | Native Name | Observability Status | Telemetry Notes |
 | :--- | :--- | :--- | :---: | :--- |

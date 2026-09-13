@@ -23,7 +23,7 @@ Designed through a Senior Site Reliability Engineering lens, `md` solves common 
 
 ### 2. High-Fidelity Table Layout Engine
 - **Strict Column Alignment**: Preserves Markdown syntax alignments (`:---` Left, `:---:` Center, `---:` Right) across headers and data rows.
-- **Unicode & Emoji Width Precision**: Calculates visual column boundaries using terminal runewidth metrics and ANSI stripping—eliminating jagged borders caused by emojis (`✅`, `⚠️`, `🚀`) or CJK glyphs.
+- **Unicode & Emoji Width Precision**: Calculates visual column boundaries using Unicode Standard Annex #29 / UAX #11 grapheme cluster metrics and ANSI stripping—eliminating jagged borders caused by emojis (`✅`, `⚠️`, `🚀`), variation selectors, or CJK glyphs.
 - **Intelligent Word-Wrapping**: When tables exceed the available terminal columns, columns are proportionally sized and wrapped cleanly at word boundaries instead of overflowing the screen.
 - **Multi-Line Row Synchronization**: Aligns wrapped multi-line cells seamlessly with matching vertical border continuations.
 - **Customizable Borders**: Switch between `rounded`, `box` (sharp), `double`, `ascii`, `markdown`, and `minimal` borders via `--table-style`.
@@ -180,7 +180,7 @@ If you run inside `tmux` within iTerm2, tmux blocks terminal escape sequences by
 │   ├── doctor/              # SRE terminal diagnostics & capability probe
 │   ├── image/               # OSC 1337 encoder, fetcher, dimension parser
 │   ├── renderer/            # Goldmark AST terminal renderer & walker
-│   ├── table/               # Accurate table engine, runewidth wrapping, borders
+│   ├── table/               # Accurate table engine, Unicode grapheme wrapping, borders
 │   ├── term/                # iTerm2 detection, TTY size, OSC 8 links, pager
 │   └── theme/               # Color palettes and Lipgloss/Chroma style sheets
 ├── testdata/

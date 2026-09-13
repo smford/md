@@ -11,17 +11,20 @@ func TestVisualWidth(t *testing.T) {
 		want  int
 	}{
 		{"hello", 5},
-		{"\x1b[31mhello\x1b[0m", 5},                       // ANSI color
-		{"\x1b]8;;https://example.com\x1b\\link\x1b]8;;\x1b\\", 4}, // OSC 8 link
-		{"🚀 rocket", 8},                                    // 2 for emoji + 1 space + 6 chars = 9? Wait: 🚀 is width 2. " " is 1. "rocket" is 6. Total = 9!
-		{"你好", 4},                                         // 2 + 2 = 4
+		{"\x1b[31mhello\x1b[0m", 5},                                // ANSI color
+		{"\x1b]8;;https://example.com\x1b\\link\x1b]8;;\x1b\\", 4},  // OSC 8 link
+		{"🚀 rocket", 9},                                           // 2 for emoji + 1 space + 6 chars = 9
+		{"你好", 4},                                                  // 2 + 2 = 4
+		{"⚠️", 2},                                                   // Emoji with variation selector 16 (\u26a0\ufe0f)
+		{"⚠️ Degraded", 11},                                         // 2 + 1 + 8 = 11
+		{"✅ Healthy", 10},                                          // 2 + 1 + 7 = 10
+		{"🛑 Paused", 9},                                            // 2 + 1 + 6 = 9
+		{"🚀 Optimal", 10},                                          // 2 + 1 + 7 = 10
 	}
 
 	for _, tt := range tests {
 		got := VisualWidth(tt.input)
-		if tt.input == "🚀 rocket" && got != 9 {
-			t.Errorf("VisualWidth(%q) = %d, want 9", tt.input, got)
-		} else if tt.input != "🚀 rocket" && got != tt.want {
+		if got != tt.want {
 			t.Errorf("VisualWidth(%q) = %d, want %d", tt.input, got, tt.want)
 		}
 	}
@@ -86,3 +89,26 @@ func TestTable_Styles(t *testing.T) {
 		})
 	}
 }
+
+func TestTable_MicroserviceSLAMatrix(t *testing.T) {
+	tbl := New([]string{"Service Name", "Cluster ID", "Health", "Uptime SLA", "p50 Latency", "p99 Latency", "Error Rate"})
+	tbl.SetAlignments([]Alignment{AlignLeft, AlignCenter, AlignCenter, AlignCenter, AlignRight, AlignRight, AlignRight})
+	tbl.AddRow("api-gateway", "us-east-1a", "✅ Healthy", "99.99%", "1.2ms", "3.4ms", "0.001%")
+	tbl.AddRow("auth-service", "us-east-1b", "✅ Healthy", "99.95%", "8.5ms", "18.2ms", "0.012%")
+	tbl.AddRow("payment-processor", "us-west-2a", "⚠️ Degraded", "99.99%", "45.0ms", "182.4ms", "0.350%")
+	tbl.AddRow("search-indexing", "eu-west-1c", "🛑 Paused", "99.90%", "210.0ms", "940.0ms", "2.100%")
+	tbl.AddRow("cache-redis-l1", "us-east-1a", "🚀 Optimal", "99.999%", "0.2ms", "0.7ms", "0.000%")
+	tbl.MaxWidth = 120
+
+	out := tbl.Render()
+	lines := strings.Split(out, "\n")
+	expectedWidth := VisualWidth(lines[0])
+
+	for i, line := range lines {
+		w := VisualWidth(line)
+		if w != expectedWidth {
+			t.Errorf("line %d visual width %d != expected width %d:\n%s", i, w, expectedWidth, line)
+		}
+	}
+}
+

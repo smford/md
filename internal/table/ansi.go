@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mattn/go-runewidth"
+	"github.com/rivo/uniseg"
 )
 
 var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]|\x1b\]8;;.*?(?:\x1b\\|\a)|\x1b\]8;;(?:\x1b\\|\a)`)
@@ -15,10 +15,11 @@ func StripANSI(s string) string {
 }
 
 // VisualWidth calculates the terminal display width of a string,
-// accounting for double-width characters (CJK, emojis) and ignoring ANSI escape codes.
+// accounting for double-width characters (CJK, emojis, variation selectors, ZWJ sequences)
+// and ignoring ANSI escape codes.
 func VisualWidth(s string) int {
 	clean := StripANSI(s)
-	return runewidth.StringWidth(clean)
+	return uniseg.StringWidth(clean)
 }
 
 // WrapWord wraps text into lines of at most maxWidth visual columns.
@@ -51,7 +52,7 @@ func WrapWord(text string, maxWidth int) []string {
 		for _, word := range words {
 			wLen := VisualWidth(word)
 
-			// If single word exceeds maxWidth, break it by runes
+			// If single word exceeds maxWidth, break it by grapheme clusters
 			if wLen > maxWidth {
 				if currentLine.Len() > 0 {
 					result = append(result, currentLine.String())
@@ -61,15 +62,17 @@ func WrapWord(text string, maxWidth int) []string {
 
 				var subWord strings.Builder
 				subWidth := 0
-				for _, r := range word {
-					rw := runewidth.RuneWidth(r)
-					if subWidth+rw > maxWidth && subWidth > 0 {
+				g := uniseg.NewGraphemes(word)
+				for g.Next() {
+					cluster := g.Str()
+					cw := g.Width()
+					if subWidth+cw > maxWidth && subWidth > 0 {
 						result = append(result, subWord.String())
 						subWord.Reset()
 						subWidth = 0
 					}
-					subWord.WriteRune(r)
-					subWidth += rw
+					subWord.WriteString(cluster)
+					subWidth += cw
 				}
 				if subWord.Len() > 0 {
 					currentLine.WriteString(subWord.String())
