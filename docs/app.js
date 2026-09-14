@@ -160,9 +160,9 @@ function initLightbox() {
 
   if (!lightbox || !lightboxImg) return;
 
-  document.querySelectorAll('.gallery-card').forEach((card) => {
-    card.addEventListener('click', () => {
-      const img = card.querySelector('img');
+  document.querySelectorAll('.gallery-card, .terminal-hero-img').forEach((el) => {
+    el.addEventListener('click', () => {
+      const img = el.tagName === 'IMG' ? el : el.querySelector('img');
       if (img) {
         lightboxImg.src = img.src;
         lightboxImg.alt = img.alt || 'Screenshot Preview';

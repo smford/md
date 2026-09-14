@@ -476,86 +476,94 @@ body {
 }
 
 /* ==========================================================================
-   Terminal Window Frame (Mockup / Preview)
+   Terminal Showcase Frame (Interactive Hero Preview)
    ========================================================================== */
-.terminal-window {
-  max-width: 1000px;
+.terminal-showcase {
+  max-width: 1040px;
   margin-inline: auto;
-  background: var(--terminal-bg);
-  border: 1px solid var(--terminal-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl), 0 0 60px rgba(0, 0, 0, 0.4);
-  overflow: hidden;
-  text-align: left;
-}
-
-.terminal-header {
+  margin-top: 2.5rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1.25rem;
-  background: #111827;
-  border-bottom: 1px solid var(--terminal-border);
 }
 
-.terminal-controls {
-  display: flex;
+.terminal-switcher {
+  display: inline-flex;
+  gap: 0.35rem;
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.35rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme="light"] .terminal-switcher {
+  background: rgba(241, 245, 249, 0.85);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.terminal-switcher .terminal-tab-btn {
+  display: inline-flex;
+  align-items: center;
   gap: 0.5rem;
-}
-
-.control-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.control-dot.red { background: #ef4444; }
-.control-dot.yellow { background: #f59e0b; }
-.control-dot.green { background: #10b981; }
-
-.terminal-title {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: #9ca3af;
+  padding: 0.5rem 1.15rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
   font-weight: 500;
-}
-
-.terminal-tabs {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.terminal-tab-btn {
-  background: none;
+  color: var(--text-muted);
   border: 1px solid transparent;
-  color: #9ca3af;
-  font-size: 0.75rem;
-  font-family: var(--font-mono);
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
+  background: transparent;
   cursor: pointer;
   transition: all var(--transition-fast);
+  font-family: var(--font-sans);
 }
 
-.terminal-tab-btn.active {
-  background: #1f2937;
-  color: #f3f4f6;
-  border-color: #374151;
+.terminal-switcher .terminal-tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.terminal-body {
-  padding: 1.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--terminal-text);
-  overflow-x: auto;
-  max-height: 520px;
-  overflow-y: auto;
+:root[data-theme="light"] .terminal-switcher .terminal-tab-btn:hover {
+  color: #0f172a;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.terminal-switcher .terminal-tab-btn.active {
+  background: linear-gradient(135deg, var(--brand-primary) 0%, #4f46e5 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.4);
+}
+
+.terminal-showcase-frame {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.terminal-hero-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 24px 70px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  display: block;
+  margin-inline: auto;
+  cursor: zoom-in;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.terminal-hero-img:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .terminal-content-view {
   display: none;
+  width: 100%;
 }
 
 .terminal-content-view.active {
@@ -566,14 +574,6 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-.terminal-preview-img {
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius-sm);
-  display: block;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* ==========================================================================

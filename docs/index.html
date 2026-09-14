@@ -10,7 +10,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="mdee — Terminal Markdown Viewer for macOS iTerm2">
   <meta property="og:description" content="High-performance terminal Markdown viewer featuring OSC 1337 inline graphics, responsive ANSI tables, and SRE production reliability.">
-  <meta property="og:image" content="assets/screenshots/demo-overview.png">
+  <meta property="og:image" content="assets/screenshots/demo-overview.png?v=1.2.2">
 
   <title>mdee — Terminal Markdown Viewer for macOS iTerm2</title>
 
@@ -88,7 +88,7 @@
         <!-- Release Badge -->
         <div class="hero-pill">
           <span class="dot" aria-hidden="true"></span>
-          <span>v1.1.0 Ready • Native iTerm2 Graphics &amp; Homebrew Tap</span>
+          <span>v1.2.2 Ready • Native iTerm2 Graphics &amp; Homebrew Tap</span>
         </div>
 
         <!-- Title & Subtitle -->
@@ -134,36 +134,37 @@
           </a>
         </div>
 
-        <!-- Terminal Mockup Frame -->
-        <div class="terminal-window">
-          <div class="terminal-header">
-            <div class="terminal-controls">
-              <span class="control-dot red" aria-hidden="true"></span>
-              <span class="control-dot yellow" aria-hidden="true"></span>
-              <span class="control-dot green" aria-hidden="true"></span>
-            </div>
-            <div class="terminal-title">asc@macbook: ~/git/mdee (zsh) — mdee README.md</div>
-            <div class="terminal-tabs" role="tablist">
-              <button class="terminal-tab-btn active" data-view="view-overview" role="tab" aria-selected="true">Overview</button>
-              <button class="terminal-tab-btn" data-view="view-tables" role="tab" aria-selected="false">SLA Tables</button>
-              <button class="terminal-tab-btn" data-view="view-doctor" role="tab" aria-selected="false">Doctor</button>
-            </div>
+        <!-- Terminal Showcase -->
+        <div class="terminal-showcase">
+          <div class="terminal-switcher" role="tablist" aria-label="Terminal Preview Views">
+            <button class="terminal-tab-btn active" data-view="view-overview" role="tab" aria-selected="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              <span>Overview</span>
+            </button>
+            <button class="terminal-tab-btn" data-view="view-tables" role="tab" aria-selected="false">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="12" y1="3" x2="12" y2="21"></line></svg>
+              <span>SLA Tables &amp; Alignment</span>
+            </button>
+            <button class="terminal-tab-btn" data-view="view-doctor" role="tab" aria-selected="false">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              <span>Doctor Diagnostics</span>
+            </button>
           </div>
 
-          <div class="terminal-body">
+          <div class="terminal-showcase-frame">
             <!-- View 1: Overview -->
             <div id="view-overview" class="terminal-content-view active">
-              <img src="assets/screenshots/demo-overview.png" alt="mdee terminal render preview with iTerm2 inline graphics and styled tables" class="terminal-preview-img" loading="eager">
+              <img src="assets/screenshots/demo-overview.png?v=1.2.2" alt="mdee terminal render preview with iTerm2 inline graphics and styled tables" class="terminal-hero-img" loading="eager" width="879" height="1867">
             </div>
 
             <!-- View 2: Tables -->
             <div id="view-tables" class="terminal-content-view">
-              <img src="assets/screenshots/tables-and-alignment.png" alt="mdee multi-style table formatting and responsive column word wrapping" class="terminal-preview-img" loading="lazy">
+              <img src="assets/screenshots/tables-and-alignment.png?v=1.2.2" alt="mdee multi-style table formatting and responsive column word wrapping" class="terminal-hero-img" loading="lazy" width="1584" height="1180">
             </div>
 
             <!-- View 3: Doctor -->
             <div id="view-doctor" class="terminal-content-view">
-              <img src="assets/screenshots/doctor-diagnostics.png" alt="mdee doctor diagnostic suite inspecting terminal protocols and capabilities" class="terminal-preview-img" loading="lazy">
+              <img src="assets/screenshots/doctor-diagnostics.png?v=1.2.2" alt="mdee doctor diagnostic suite inspecting terminal protocols and capabilities" class="terminal-hero-img" loading="lazy" width="699" height="667">
             </div>
           </div>
         </div>
@@ -303,7 +304,7 @@
           <!-- Screenshot 1 -->
           <div class="gallery-card">
             <div class="gallery-img-wrap">
-              <img src="assets/screenshots/demo-overview.png" alt="Demo overview showing Markdown rendering in iTerm2" loading="lazy">
+              <img src="assets/screenshots/demo-overview.png?v=1.2.2" alt="Demo overview showing Markdown rendering in iTerm2" loading="lazy" width="879" height="1867">
               <div class="gallery-overlay">
                 <span class="badge-zoom">🔍 Click to Expand</span>
               </div>
@@ -317,7 +318,7 @@
           <!-- Screenshot 2 -->
           <div class="gallery-card">
             <div class="gallery-img-wrap">
-              <img src="assets/screenshots/tables-and-alignment.png" alt="Advanced multi-column tables with emoji alignment" loading="lazy">
+              <img src="assets/screenshots/tables-and-alignment.png?v=1.2.2" alt="Advanced multi-column tables with emoji alignment" loading="lazy" width="1584" height="1180">
               <div class="gallery-overlay">
                 <span class="badge-zoom">🔍 Click to Expand</span>
               </div>
@@ -331,7 +332,7 @@
           <!-- Screenshot 3 -->
           <div class="gallery-card">
             <div class="gallery-img-wrap">
-              <img src="assets/screenshots/doctor-diagnostics.png" alt="Terminal diagnostic capabilities report" loading="lazy">
+              <img src="assets/screenshots/doctor-diagnostics.png?v=1.2.2" alt="Terminal diagnostic capabilities report" loading="lazy" width="699" height="667">
               <div class="gallery-overlay">
                 <span class="badge-zoom">🔍 Click to Expand</span>
               </div>
