@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/smford/md/internal/config"
-	"github.com/smford/md/internal/table"
-	"github.com/smford/md/internal/term"
+	"github.com/smford/mdee/internal/config"
+	"github.com/smford/mdee/internal/table"
+	"github.com/smford/mdee/internal/term"
 )
 
 func TestCLIVersion(t *testing.T) {

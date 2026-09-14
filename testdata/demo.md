@@ -83,4 +83,4 @@ func (h *HealthChecker) Check(ctx context.Context, target string) (bool, error) 
 ### References & Dashboards
 - [Grafana Cluster Overview](https://grafana.internal/d/sre-prod-overview)
 - [PagerDuty Incident Timeline](https://pagerduty.com/incidents/Q892LMA)
-- [Post-Mortem Documentation](https://github.com/smford/md)
+- [Post-Mortem Documentation](https://github.com/smford/mdee)

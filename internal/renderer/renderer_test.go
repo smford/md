@@ -7,8 +7,8 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
-	"github.com/smford/md/internal/config"
-	"github.com/smford/md/internal/table"
+	"github.com/smford/mdee/internal/config"
+	"github.com/smford/mdee/internal/table"
 )
 
 func TestRenderer_BasicElements(t *testing.T) {

@@ -7,11 +7,12 @@ import (
 	"image/color"
 	"image/png"
 	"runtime"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	imagePkg "github.com/smford/md/internal/image"
-	"github.com/smford/md/internal/table"
-	"github.com/smford/md/internal/term"
+	imagePkg "github.com/smford/mdee/internal/image"
+	"github.com/smford/mdee/internal/table"
+	"github.com/smford/mdee/internal/term"
 )
 
 // RunDiagnostics generates a full SRE terminal health and capability report.
@@ -23,10 +24,10 @@ func RunDiagnostics() string {
 	warnStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("214")).Bold(true)
 	infoStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("245"))
 
-	var sb stringsBuilder
+	var sb strings.Builder
 
 	sb.WriteString(titleStyle.Render("╭──────────────────────────────────────────────────────────────╮") + "\n")
-	sb.WriteString(titleStyle.Render("│           md - SRE Terminal Diagnostic & Capabilities        │") + "\n")
+	sb.WriteString(titleStyle.Render("│          mdee - SRE Terminal Diagnostic & Capabilities       │") + "\n")
 	sb.WriteString(titleStyle.Render("╰──────────────────────────────────────────────────────────────╯") + "\n\n")
 
 	// 1. Environment & Runtime Table
@@ -73,7 +74,7 @@ func RunDiagnostics() string {
 	sb.WriteString(titleStyle.Render("── Protocol Verification Test ──────────────────────────────────") + "\n\n")
 
 	// Test link
-	testLink := term.FormatHyperlink("https://github.com/smford/md", "Click here to test OSC 8 GitHub link", true)
+	testLink := term.FormatHyperlink("https://github.com/smford/mdee", "Click here to test OSC 8 GitHub link", true)
 	sb.WriteString(fmt.Sprintf("  • OSC 8 Hyperlink: %s\n", testLink))
 
 	// Test inline image (mini 32x32 color swatch)

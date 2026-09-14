@@ -1,4 +1,4 @@
-BINARY_NAME=md
+BINARY_NAME=mdee
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "none")
 DATE ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -10,7 +10,7 @@ all: build
 
 build:
 	@mkdir -p bin
-	go build $(LDFLAGS) -o bin/$(BINARY_NAME) ./cmd/md
+	go build $(LDFLAGS) -o bin/$(BINARY_NAME) ./cmd/mdee
 
 test:
 	go test -v ./...

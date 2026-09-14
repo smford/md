@@ -165,12 +165,12 @@ jobs:
               EXT=".exe"
             fi
 
-            BIN_NAME="md${EXT}"
-            ARCHIVE_DIR="md-${TAG_NAME}-${GOOS}-${GOARCH}"
+            BIN_NAME="mdee${EXT}"
+            ARCHIVE_DIR="mdee-${TAG_NAME}-${GOOS}-${GOARCH}"
             mkdir -p "dist/${ARCHIVE_DIR}"
 
             echo "Building for ${GOOS}/${GOARCH}..."
-            CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "$LDFLAGS" -o "dist/${ARCHIVE_DIR}/${BIN_NAME}" ./cmd/md
+            CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "$LDFLAGS" -o "dist/${ARCHIVE_DIR}/${BIN_NAME}" ./cmd/mdee
 
             cp README.md LICENSE "dist/${ARCHIVE_DIR}/"
 
@@ -184,7 +184,7 @@ jobs:
           done
 
           # Generate SHA256 checksums
-          (cd dist && sha256sum md-* > checksums.txt)
+          (cd dist && sha256sum mdee-* > checksums.txt)
 
       - name: Create GitHub Release
         if: steps.version.outputs.skip != 'true'
@@ -207,10 +207,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x scripts/generate_formula.sh
-          ./scripts/generate_formula.sh "$VERSION" "$TAG_NAME" "dist" "dist/md.rb"
+          ./scripts/generate_formula.sh "$VERSION" "$TAG_NAME" "dist" "dist/mdee.rb"
 
           # Upload formula file directly to GitHub Release assets
-          gh release upload "$TAG_NAME" dist/md.rb
+          gh release upload "$TAG_NAME" dist/mdee.rb
 
           # Push to smford/homebrew-tap if TAP_TOKEN secret is configured
           if [ -n "${TAP_TOKEN}" ]; then
@@ -219,10 +219,10 @@ jobs:
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
             git clone "https://x-access-token:${TAP_TOKEN}@github.com/smford/homebrew-tap.git" tap_repo
             mkdir -p tap_repo/Formula
-            cp dist/md.rb tap_repo/Formula/md.rb
+            cp dist/mdee.rb tap_repo/Formula/mdee.rb
             cd tap_repo
-            git add Formula/md.rb
-            if git commit -m "feat(formula): update md to ${TAG_NAME}"; then
+            git add Formula/mdee.rb
+            if git commit -m "feat(formula): update mdee to ${TAG_NAME}"; then
               git push origin main
               echo "Successfully pushed formula update to smford/homebrew-tap"
             else
@@ -231,5 +231,5 @@ jobs:
             cd ..
             rm -rf tap_repo
           else
-            echo "HOMEBREW_TAP_TOKEN secret is not set. Formula generated at dist/md.rb."
+            echo "HOMEBREW_TAP_TOKEN secret is not set. Formula generated at dist/mdee.rb."
           fi

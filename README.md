@@ -1,17 +1,17 @@
-# md: Terminal Markdown Viewer for macOS iTerm2
+# mdee: Terminal Markdown Viewer for macOS iTerm2
 
-[![CI](https://github.com/smford/md/actions/workflows/ci.yml/badge.svg)](https://github.com/smford/md/actions/workflows/ci.yml)
-[![Website](https://img.shields.io/badge/Website-smford.github.io%2Fmd-6366f1?logo=google-chrome&logoColor=white)](https://smford.github.io/md/)
+[![CI](https://github.com/smford/mdee/actions/workflows/ci.yml/badge.svg)](https://github.com/smford/mdee/actions/workflows/ci.yml)
+[![Website](https://img.shields.io/badge/Website-smford.github.io%2Fmdee-6366f1?logo=google-chrome&logoColor=white)](https://smford.github.io/mdee/)
 [![Go Version](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://golang.org)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 [![Platform: macOS iTerm2](https://img.shields.io/badge/Platform-macOS%20iTerm2-blue?logo=apple)](https://iterm2.com)
 
-`md` is a production-grade terminal Markdown viewer written in Go, specifically engineered for macOS and optimized for [iTerm2](https://iterm2.com).
+`mdee` is a production-grade terminal Markdown viewer written in Go, specifically engineered for macOS and optimized for [iTerm2](https://iterm2.com).
 
-Designed through a Senior Site Reliability Engineering lens, `md` solves common terminal Markdown rendering issues: **garbled wide tables**, **missing or broken images**, **pipe panics**, and **unreadable terminal wrapping**.
+Designed through a Senior Site Reliability Engineering lens, `mdee` solves common terminal Markdown rendering issues: **garbled wide tables**, **missing or broken images**, **pipe panics**, and **unreadable terminal wrapping**.
 
 <p align="center">
-  <img src="assets/screenshots/demo-overview.png" alt="md Terminal Markdown Viewer in macOS iTerm2" width="850" />
+  <img src="assets/screenshots/demo-overview.png" alt="mdee Terminal Markdown Viewer in macOS iTerm2" width="850" />
 </p>
 
 ---
@@ -46,10 +46,10 @@ Designed through a Senior Site Reliability Engineering lens, `md` solves common 
 - Terminal links render as native OSC 8 clickable hyperlinks in iTerm2—`Cmd+Click` on any link text to open the target URL directly in your browser.
 
 ### 5. Production SRE Reliability
-- **Safe Broken Pipes (`EPIPE`)**: Gracefully handles downstream pipe termination (e.g. `md doc.md | head -n 5`) without emitting runtime panics or broken pipe error traces.
+- **Safe Broken Pipes (`EPIPE`)**: Gracefully handles downstream pipe termination (e.g. `mdee doc.md | head -n 5`) without emitting runtime panics or broken pipe error traces.
 - **Interactive Pager**: Optionally pipe long output through `$PAGER` (defaulting to `less -R -F -X`) using the `--pager` flag.
 - **Plain Mode for Scripting**: Use `--plain` to strip all ANSI codes and borders, outputting clean plain text suitable for `grep`, `awk`, or saving to log files.
-- **Built-in Diagnostics (`md doctor`)**: Inspect terminal capabilities, iTerm2 detection, truecolor, and inline graphic protocols in one command.
+- **Built-in Diagnostics (`mdee doctor`)**: Inspect terminal capabilities, iTerm2 detection, truecolor, and inline graphic protocols in one command.
 
 ---
 
@@ -60,38 +60,38 @@ Designed through a Senior Site Reliability Engineering lens, `md` solves common 
 Install using the custom Homebrew tap:
 
 ```bash
-brew install smford/tap/md
+brew install smford/tap/mdee
 ```
 
 Or tap first:
 
 ```bash
 brew tap smford/tap
-brew install md
+brew install mdee
 ```
 
 To upgrade:
 
 ```bash
-brew update && brew upgrade md
+brew update && brew upgrade mdee
 ```
 
 ### From Source (Go 1.24+)
 
 ```bash
-git clone https://github.com/smford/md.git
-cd md
+git clone https://github.com/smford/mdee.git
+cd mdee
 make install
 ```
 
-This installs the `md` binary into your `$GOPATH/bin` (typically `~/go/bin/md`). Ensure `~/go/bin` is in your `$PATH`.
+This installs the `mdee` binary into your `$GOPATH/bin` (typically `~/go/bin/mdee`). Ensure `~/go/bin` is in your `$PATH`.
 
 ### Manual Build
 
 ```bash
 make build
-# Binary is generated at ./bin/md
-./bin/md --version
+# Binary is generated at ./bin/mdee
+./bin/mdee --version
 ```
 
 ---
@@ -100,25 +100,25 @@ make build
 
 ```bash
 # View a local Markdown file
-md README.md
+mdee README.md
 
 # View a Markdown file from a remote URL
-md https://raw.githubusercontent.com/smford/md/main/README.md
+mdee https://raw.githubusercontent.com/smford/mdee/main/README.md
 
 # Read from standard input (stdin)
-cat architecture.md | md
+cat architecture.md | mdee
 
 # View with custom theme and table style
-md --theme dracula --table-style box doc.md
+mdee --theme dracula --table-style box doc.md
 
 # Constrain rendering width to 100 columns
-md -w 100 report.md
+mdee -w 100 report.md
 
 # Show line numbers in code blocks
-md -n main.md
+mdee -n main.md
 
 # Plain text output (no ANSI escapes or colors)
-md --plain guide.md | grep "Configuration"
+mdee --plain guide.md | grep "Configuration"
 ```
 
 ---
@@ -145,14 +145,14 @@ md --plain guide.md | grep "Configuration"
 
 ## Subcommands
 
-### `md doctor`
+### `mdee doctor`
 Diagnoses your current terminal environment and verifies protocol support:
 
 ```bash
-$ md doctor
+$ mdee doctor
 
 ╭──────────────────────────────────────────────────────────────╮
-│           md - SRE Terminal Diagnostic & Capabilities        │
+│          mdee - SRE Terminal Diagnostic & Capabilities       │
 ╰──────────────────────────────────────────────────────────────╯
 
 ╭──────────────────────────┬───────────────────┬─────────────────────────╮
@@ -179,7 +179,7 @@ $ md doctor
 ```
 
 <p align="center">
-  <img src="assets/screenshots/doctor-diagnostics.png" alt="md doctor Terminal Diagnostics and Capabilities" width="850" />
+  <img src="assets/screenshots/doctor-diagnostics.png" alt="mdee doctor Terminal Diagnostics and Capabilities" width="850" />
 </p>
 
 ---
@@ -197,7 +197,7 @@ If you run inside `tmux` within iTerm2, tmux blocks terminal escape sequences by
    tmux source-file ~/.tmux.conf
    ```
 
-`md` automatically detects tmux sessions and formats images with the necessary DCS passthrough encapsulation.
+`mdee` automatically detects tmux sessions and formats images with the necessary DCS passthrough encapsulation.
 
 ---
 
@@ -206,7 +206,7 @@ If you run inside `tmux` within iTerm2, tmux blocks terminal escape sequences by
 ```
 .
 ├── cmd/
-│   └── md/
+│   └── mdee/
 │       ├── main.go          # CLI entrypoint, flag parsing, broken pipe handling
 │       └── main_test.go     # CLI command execution tests
 ├── internal/

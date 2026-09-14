@@ -66,10 +66,10 @@ function initInstallTabs() {
   const commandEl = document.getElementById('install-cmd-text');
 
   const commands = {
-    homebrew: 'brew install smford/tap/md',
-    go: 'go install github.com/smford/md/cmd/md@latest',
-    source: 'git clone https://github.com/smford/md.git && cd md && make build',
-    binary: 'curl -fsSL https://raw.githubusercontent.com/smford/md/main/install.sh | sh'
+    homebrew: 'brew install smford/tap/mdee',
+    go: 'go install github.com/smford/mdee/cmd/mdee@latest',
+    source: 'git clone https://github.com/smford/mdee.git && cd mdee && make build',
+    binary: 'curl -fsSL https://raw.githubusercontent.com/smford/mdee/main/install.sh | sh'
   };
 
   tabs.forEach((tab) => {

@@ -6,9 +6,9 @@ version: "1.0.0"
 status: "Ready for Validation"
 ---
 
-# `md` Terminal Viewer: Comprehensive Validation Suite
+# `mdee` Terminal Viewer: Comprehensive Validation Suite
 
-Welcome to the **`md`** test suite! This document is designed to thoroughly exercise all features of the terminal Markdown viewer in macOS **iTerm2**, validating:
+Welcome to the **`mdee`** test suite! This document is designed to thoroughly exercise all features of the terminal Markdown viewer in macOS **iTerm2**, validating:
 
 1. **Table alignment, width calculations, and word wrapping**
 2. **Inline iTerm2 graphics (OSC 1337) and fallback modes**
@@ -220,7 +220,7 @@ In modern terminals (including iTerm2), the links below are clickable with `Cmd 
 - [Official Go Language Documentation](https://go.dev)
 - [iTerm2 Feature Overview](https://iterm2.com)
 - [Google SRE Book Online](https://sre.google/sre-book/table-of-contents/)
-- [Project Repository on GitHub](https://github.com/smford/md)
+- [Project Repository on GitHub](https://github.com/smford/mdee)
 
 ---
 
@@ -230,23 +230,23 @@ Run these commands in your terminal to verify various viewer capabilities:
 
 ```bash
 # 1. Run terminal capabilities diagnostic
-./bin/md doctor
+./bin/mdee doctor
 
 # 2. View in default dark theme
-./bin/md test.md
+./bin/mdee test.md
 
 # 3. View in Dracula theme with double borders
-./bin/md --theme dracula --table-style double test.md
+./bin/mdee --theme dracula --table-style double test.md
 
 # 4. View in Light theme with box borders
-./bin/md --theme light --table-style box test.md
+./bin/mdee --theme light --table-style box test.md
 
 # 5. Constrain width to 90 columns with line numbers
-./bin/md -w 90 -n test.md
+./bin/mdee -w 90 -n test.md
 
 # 6. Plain text mode (safe for piping / grep / awk)
-./bin/md --plain test.md | grep "Healthy"
+./bin/mdee --plain test.md | grep "Healthy"
 
 # 7. Test broken pipe handling
-cat test.md | ./bin/md --plain | head -n 25
+cat test.md | ./bin/mdee --plain | head -n 25
 ```

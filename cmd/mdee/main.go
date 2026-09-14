@@ -13,10 +13,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/smford/md/internal/config"
-	"github.com/smford/md/internal/doctor"
-	"github.com/smford/md/internal/renderer"
-	"github.com/smford/md/internal/term"
+	"github.com/smford/mdee/internal/config"
+	"github.com/smford/mdee/internal/doctor"
+	"github.com/smford/mdee/internal/renderer"
+	"github.com/smford/mdee/internal/term"
 	"github.com/spf13/cobra"
 )
 
@@ -53,10 +53,10 @@ func newRootCmd() *cobra.Command {
 	var noHyperlinks bool
 
 	cmd := &cobra.Command{
-		Use:     "md [flags] [file | URL ...]",
+		Use:     "mdee [flags] [file | URL ...]",
 		Version: version,
 		Short:   "High-fidelity Markdown terminal viewer optimized for macOS iTerm2",
-		Long: `md is a production-grade terminal Markdown viewer written in Go.
+		Long: `mdee is a production-grade terminal Markdown viewer written in Go.
 Specifically engineered for macOS iTerm2, it delivers accurate inline graphics
 using the iTerm2 OSC 1337 protocol, word-wrapped and auto-aligned tables with
 Unicode box borders, syntax-highlighted code blocks, and OSC 8 clickable hyperlinks.`,
@@ -114,7 +114,7 @@ func newVersionCmd() *cobra.Command {
 		Use:   "version",
 		Short: "Print application version and build metadata",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("md version %s (commit: %s, built: %s)\n", version, commit, date)
+			fmt.Printf("mdee version %s (commit: %s, built: %s)\n", version, commit, date)
 		},
 	}
 }
