@@ -22,7 +22,7 @@ import (
 
 var (
 	// Build metadata populated via ldflags at build time
-	version = "1.0.0"
+	version = "dev"
 	commit  = "none"
 	date    = "unknown"
 )
