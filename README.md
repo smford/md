@@ -1,6 +1,7 @@
 # md: Terminal Markdown Viewer for macOS iTerm2
 
 [![CI](https://github.com/smford/md/actions/workflows/ci.yml/badge.svg)](https://github.com/smford/md/actions/workflows/ci.yml)
+[![Website](https://img.shields.io/badge/Website-smford.github.io%2Fmd-6366f1?logo=google-chrome&logoColor=white)](https://smford.github.io/md/)
 [![Go Version](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://golang.org)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 [![Platform: macOS iTerm2](https://img.shields.io/badge/Platform-macOS%20iTerm2-blue?logo=apple)](https://iterm2.com)
