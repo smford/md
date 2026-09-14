@@ -54,6 +54,27 @@ Designed through a Senior Site Reliability Engineering lens, `md` solves common 
 
 ## Installation
 
+### Via Homebrew (macOS & Linux)
+
+Install using the custom Homebrew tap:
+
+```bash
+brew install smford/tap/md
+```
+
+Or tap first:
+
+```bash
+brew tap smford/tap
+brew install md
+```
+
+To upgrade:
+
+```bash
+brew update && brew upgrade md
+```
+
 ### From Source (Go 1.24+)
 
 ```bash

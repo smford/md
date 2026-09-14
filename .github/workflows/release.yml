@@ -197,3 +197,39 @@ jobs:
             --target "$GITHUB_SHA" \
             --generate-notes \
             dist/*
+
+      - name: Generate and Publish Homebrew Formula
+        if: steps.version.outputs.skip != 'true'
+        env:
+          TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          TAG_NAME: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x scripts/generate_formula.sh
+          ./scripts/generate_formula.sh "$VERSION" "$TAG_NAME" "dist" "dist/md.rb"
+
+          # Upload formula file directly to GitHub Release assets
+          gh release upload "$TAG_NAME" dist/md.rb
+
+          # Push to smford/homebrew-tap if TAP_TOKEN secret is configured
+          if [ -n "${TAP_TOKEN}" ]; then
+            echo "Publishing updated formula to smford/homebrew-tap..."
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git clone "https://x-access-token:${TAP_TOKEN}@github.com/smford/homebrew-tap.git" tap_repo
+            mkdir -p tap_repo/Formula
+            cp dist/md.rb tap_repo/Formula/md.rb
+            cd tap_repo
+            git add Formula/md.rb
+            if git commit -m "feat(formula): update md to ${TAG_NAME}"; then
+              git push origin main
+              echo "Successfully pushed formula update to smford/homebrew-tap"
+            else
+              echo "Formula in tap is already up to date"
+            fi
+            cd ..
+            rm -rf tap_repo
+          else
+            echo "HOMEBREW_TAP_TOKEN secret is not set. Formula generated at dist/md.rb."
+          fi
